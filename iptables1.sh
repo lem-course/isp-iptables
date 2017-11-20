@@ -122,47 +122,46 @@ iptables -A OUTPUT -o lo -j ACCEPT
 
 #################################
 ### Allow DNS lookups as a client
-### (1) Allow the access to a remote DNS server.
+### (1) Allow access to a particular DNS server.
 ###	The IP address of the DNS server is given in variable NAMESERVER
 iptables -A OUTPUT -o $INET_IFACE -p udp -s $IPADDR --sport $UNPRIVPORTS -d $NAMESERVER --dport 53 -j ACCEPT
 iptables -A INPUT  -i $INET_IFACE -p udp -s $NAMESERVER --sport 53 -d $IPADDR --dport $UNPRIVPORTS -j ACCEPT
 
 ################
 ### SSH
-### (2) Allow local client access to a remote SSH server
-iptables -A OUTPUT -o $INET_IFACE -p tcp -s $IPADDR --sport $UNPRIVPORTS --dport 22 -j ACCEPT
-iptables -A INPUT -i $INET_IFACE -p tcp ! --syn --sport 22 -d $IPADDR --dport $UNPRIVPORTS -j ACCEPT
+### (2) Allow outgoing SSH connections
+iptables -A OUTPUT -p tcp --dport 22 -j ACCEPT
+iptables -A INPUT  -p tcp ! --syn --sport 22 -j ACCEPT
 
-### (3) Allow remote client to access local ssh server
-iptables -A INPUT -i $INET_IFACE -p tcp -d $IPADDR --dport 22 --sport $UNPRIVPORTS -j ACCEPT
-iptables -A OUTPUT -o $INET_IFACE -p tcp -s $IPADDR --sport 22 --dport $UNPRIVPORTS -j ACCEPT
+### (3) Allow incoming SSH connections
+iptables -A INPUT  -p tcp --dport 22 -j ACCEPT
+iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
 
 
 ################
 ### HTTP settings
-### (4) TODO: Allow local client to access remote http server
+### (4) TODO: Allow outgoing HTTP connections
 
 
-### (5) TODO: Allow remote client to access local http server
+### (5) TODO: Allow incoming HTTP connections
 
 
 ################
 ### HTTPS settings
-### (6) TODO: Allow local client to access remote https server
+### (6) TODO: Allow outgoing HTTPS connections
 
 
-### (7) TODO: Allow remote client to access local https server
+### (7) TODO: Allow incoming HTTPS connections
 
 
 #################
 ### ICMP settings
-### (8) TODO: Allow outgoing ping requests to anywhere
-###           (and corresponding ping replies)
-### Hint: use protocol icmp and set the type of the message to either
-### request or response
+### (8) TODO: Allow outgoing ping requests (and corresponding ping replies)
+### Hint: use protocol icmp and set the type of the message to either request
+### or reply.
 
 
-### (9) TODO: Allow incoming pings from trusted hosts $MY_ISP
+### (9) TODO: Allow incoming pings from trusted hosts given in variable $MY_ISP
 
 }
 
