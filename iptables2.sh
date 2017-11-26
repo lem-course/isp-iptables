@@ -131,7 +131,7 @@ iptables -A OUTPUT -p udp -d $NAMESERVER --dport 53 -m state --state NEW -j ACCE
 # (4) TODO: Allow outgoing SSH connections to remote SSH servers
 
 
-# (5) Allow incomming connections to local SSH server
+# (5) TODO: Allow incomming connections to local SSH server
 
 
 # (6) TODO: Allow outgoing HTTP requests 
@@ -156,19 +156,22 @@ iptables -A OUTPUT -p udp -d $NAMESERVER --dport 53 -m state --state NEW -j ACCE
 # "-m multiport" and "--ports" switches.
 # Make sure to comment rules 4-9 before testing.
 
+
 ### FORWARDING RULES
 
 # Do NAT for internet-bound traffic
 iptables -t nat -A POSTROUTING -o $INET_IFACE -j MASQUERADE
 
-# (1) Forward pings
-iptables -A FORWARD -p icmp -j ACCEPT
+# (13) TODO: Allow routing of packets that belong to ESTABLISHED or RELATED connections.
 
-# (2) Forward DNS traffic
-iptables -A FORWARD -p udp -m multiport --ports 53 -j ACCEPT
 
-# (3) TODO: Forward HTTP, HTTPS and SSH traffic
+# (14) Forward pings
+iptables -A FORWARD -p icmp --icmp-type echo-request -m state --state NEW  -j ACCEPT
 
+# (15) Forward DNS requests from subnets to Internet and permit in corresponding responses
+iptables -A FORWARD -o $INET_IFACE -p udp -m multiport --ports 53 -m state --state NEW -j ACCEPT
+
+# (16) TODO: Forward HTTP, HTTPS and SSH traffic from client_subnet to Internet and to server_subnet
 
 
 }
