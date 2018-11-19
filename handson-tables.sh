@@ -22,23 +22,17 @@
 ### USER CONFIGURABLE SECTION
 #############################
 
+# Exit immediately if a command exits with a non-zero status.
 set -e
+
+# Print commands and their arguments as they are executed
 set -x
 
 DESC="netfilter/iptables firewall on $HOSTNAME"
+INET_IFACE="enp0s3" # Internet-connected interface
+IPADDR=`ifconfig $INET_IFACE | grep "inet" | cut -d " " -f10 | cut -d " " -f1`
 
-INET_IFACE="enp0s3"                      # Internet-connected interface
-IPADDR=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f2 | cut -d " " -f1`
-
-MY_ISP="0.0.0.0/0"                   # ISP server & NOC address range
-# Your subnet's network address
-SUBNET_BASE=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f4 | cut -d " " -f1`
-# Your subnet's broadcast address
-SUBNET_BROADCAST=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f3 | cut -d " " -f1`
-PRIVPORTS="0:1023"                   # well-known, privileged port range
-UNPRIVPORTS="1024:65535"             # unprivileged port range
-
-# DNS server 1
+# DNS server
 NAMESERVER=`nmcli dev show $INET_IFACE | grep IP4.DNS | cut -d ":" -f2 | tail --lines=1 | tr -d '[[:space:]]'`
 
 

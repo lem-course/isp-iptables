@@ -29,19 +29,10 @@ set -e
 set -x
 
 DESC="netfilter/iptables firewall on $HOSTNAME"
+INET_IFACE="enp0s3" # Internet-connected interface
+IPADDR=`ifconfig $INET_IFACE | grep "inet" | cut -d " " -f10 | cut -d " " -f1`
 
-INET_IFACE="enp0s3"                      # Internet-connected interface
-IPADDR=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f2 | cut -d " " -f1`
-
-MY_ISP="0.0.0.0/0"                   # ISP server & NOC address range
-# Your subnet's network address
-SUBNET_BASE=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f4 | cut -d " " -f1`
-# Your subnet's broadcast address
-SUBNET_BROADCAST=`ifconfig $INET_IFACE | grep "inet addr:" | cut -d ":" -f3 | cut -d " " -f1`
-PRIVPORTS="0:1023"                   # well-known, privileged port range
-UNPRIVPORTS="1024:65535"             # unprivileged port range
-
-# DNS server 1
+# DNS server
 NAMESERVER=`nmcli dev show $INET_IFACE | grep IP4.DNS | cut -d ":" -f2 | tail --lines=1 | tr -d '[[:space:]]'`
 
 
@@ -124,8 +115,8 @@ iptables -A OUTPUT -o lo -j ACCEPT
 ### Allow DNS lookups as a client
 ### (1) Allow access to a particular DNS server.
 ###	The IP address of the DNS server is given in variable NAMESERVER
-iptables -A OUTPUT -o $INET_IFACE -p udp -s $IPADDR --sport $UNPRIVPORTS -d $NAMESERVER --dport 53 -j ACCEPT
-iptables -A INPUT  -i $INET_IFACE -p udp -s $NAMESERVER --sport 53 -d $IPADDR --dport $UNPRIVPORTS -j ACCEPT
+iptables -A OUTPUT -o $INET_IFACE -p udp -d $NAMESERVER --dport 53 -j ACCEPT
+iptables -A INPUT  -i $INET_IFACE -p udp --sport 53 -d $IPADDR -j ACCEPT
 
 ################
 ### SSH
