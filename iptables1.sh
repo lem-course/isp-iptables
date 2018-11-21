@@ -28,7 +28,6 @@ set -e
 # Print commands and their arguments as they are executed
 set -x
 
-DESC="netfilter/iptables firewall on $HOSTNAME"
 INET_IFACE="enp0s3" # Internet-connected interface
 IPADDR=`ifconfig $INET_IFACE | grep "inet" | cut -d " " -f10 | cut -d " " -f1`
 
@@ -116,7 +115,7 @@ iptables -A OUTPUT -o lo -j ACCEPT
 ### (1) Allow access to a particular DNS server.
 ###	The IP address of the DNS server is given in variable NAMESERVER
 iptables -A OUTPUT -o $INET_IFACE -p udp -d $NAMESERVER --dport 53 -j ACCEPT
-iptables -A INPUT  -i $INET_IFACE -p udp --sport 53 -d $IPADDR -j ACCEPT
+iptables -A INPUT  -i $INET_IFACE -p udp -s $NAMESERVER --sport 53 -j ACCEPT
 
 ################
 ### SSH
