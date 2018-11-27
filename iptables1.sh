@@ -151,7 +151,7 @@ iptables -A OUTPUT -p tcp --sport 22 -j ACCEPT
 ### or reply.
 
 
-### (9) TODO: Allow incoming pings from trusted hosts given in variable $MY_ISP
+### (9) TODO: Allow incoming pings but only from a specific IP address (you may decide which one)
 
 }
 

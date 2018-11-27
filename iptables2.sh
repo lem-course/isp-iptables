@@ -113,8 +113,9 @@ iptables -A OUTPUT -o lo -j ACCEPT
 
 ### Stateful firewall assignments
 
-# (1) Allow all incoming packets that belong to ESTABLISHED or RELATED connections.
+# (1) ESTABLISH-RELATED trick: Allow all incoming packets that belong to ESTABLISHED or RELATED connections.
 iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+# From here onwards, we can add incoming firewall exceptions using only the NEW state
 
 # (2) TODO: Allow all outgoing packets that belong to ESTABLISHED or RELATED connections.
 
