@@ -30,7 +30,7 @@ set -x
 
 DESC="netfilter/iptables firewall on $HOSTNAME"
 INET_IFACE="enp0s3" # Internet-connected interface
-IPADDR=`ifconfig $INET_IFACE | grep "inet" | cut -d " " -f10 | cut -d " " -f1`
+IPADDR=`ip addr show $INET_IFACE | grep "inet " | cut -d " " -f6 | cut -d "/" -f1`
 
 # DNS server
 NAMESERVER=`nmcli dev show $INET_IFACE | grep IP4.DNS | cut -d ":" -f2 | tail --lines=1 | tr -d '[[:space:]]'`
